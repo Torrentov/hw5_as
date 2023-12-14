@@ -2,7 +2,6 @@ import torch.nn as nn
 import torch
 import torch.nn.functional as F
 
-from hw_as.preprocessing.mel_spectrogram import MelSpectrogram
 
 
 class HiFiGANLoss(nn.Module):
@@ -10,7 +9,6 @@ class HiFiGANLoss(nn.Module):
         super().__init__()
         self.mse_loss = nn.MSELoss()
         self.l1_loss = nn.L1Loss()
-        self.mel_spectrogram = MelSpectrogram()
         self.fm_loss_lambda = fm_loss_lambda
         self.mel_loss_lambda = mel_loss_lambda
 

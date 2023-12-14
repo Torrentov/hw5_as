@@ -1,7 +1,6 @@
 import torch
 import torch.nn.functional as F
-
-from hw_as.preprocessing.mel_spectrogram import MelSpectrogram
+from math import ceil
 
 import logging
 from typing import List
@@ -13,30 +12,30 @@ def collate_fn(dataset_items: List[dict]):
     """
     Collate and pad fields in dataset items
     """
-
     result_batch = {}
-    wave2spec = MelSpectrogram()
-
-    audio_max_length = max(item['audio'].size(1) for item in dataset_items)
 
     result_batch['audio_gt'] = []
     result_batch['audio_path'] = []
-    spectrograms = []
+    # result_batch['speaker_id'] = []
+    # result_batch['system_id'] = []
+    result_batch['gt_label'] = []
 
     for elem in dataset_items:
         wave_current_length = elem['audio'].shape[1]
-        wave_padding_needed = audio_max_length - wave_current_length
-        padding_tensor = torch.zeros(1, wave_padding_needed)
-        wave_padded = torch.cat((elem['audio'], padding_tensor), dim=1)
+        if wave_current_length >= 64000:
+            wave_padded = elem['audio'][:, :64000]
+        else:
+            wave_repeats = ceil(64000 / wave_current_length)
+            wave_padded = torch.tile(elem['audio'], (1, wave_repeats))[:, :64000]
         result_batch['audio_gt'].append(wave_padded)
         result_batch['audio_path'].append(elem['audio_path'])
-        with torch.no_grad():
-            audio_spectrogram = wave2spec(wave_padded)
-        spectrograms.append(audio_spectrogram)
+        # result_batch['speaker_id'].append(elem['speaker_id'])
+        # result_batch['system_id'].append(elem['system_id'])
+        result_batch['gt_label'].append(elem['gt_label'])
 
     result_batch['audio_gt'] = torch.stack(result_batch['audio_gt'])
+    # result_batch['speaker_id'] = torch.Tensor(result_batch['speaker_id'])
+    # result_batch['system_id'] = torch.Tensor(result_batch['system_id'])
+    result_batch['gt_label'] = torch.LongTensor(result_batch['gt_label'])
 
-    max_time = max(spec.shape[-1] for spec in spectrograms)
-    padded_spectrograms = [F.pad(spec, (0, max_time - spec.shape[-1])) for spec in spectrograms]
-    result_batch["mel"] = torch.stack(padded_spectrograms).squeeze(1)
     return result_batch

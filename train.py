@@ -52,28 +52,19 @@ def main(config):
 
     # build optimizer, learning rate scheduler. delete every line containing lr_scheduler for
     # disabling scheduler
-    generator_params = filter(lambda p: p.requires_grad, model.generator.parameters())
-    mpd_params = filter(lambda p: p.requires_grad, model.mpd.parameters())
-    msd_params = filter(lambda p: p.requires_grad, model.msd.parameters())
+    params = filter(lambda p: p.requires_grad, model.parameters())
 
-    generator_optimizer = config.init_obj(config["optimizer"], torch.optim, generator_params)
-    discriminator_optimizer = config.init_obj(config["optimizer"], torch.optim, itertools.chain(msd_params, mpd_params))
-
-    generator_scheduler = config.init_obj(config["lr_scheduler"], torch.optim.lr_scheduler, generator_optimizer)
-    discriminator_scheduler = config.init_obj(config["lr_scheduler"], torch.optim.lr_scheduler, discriminator_optimizer)
+    optimizer = config.init_obj(config["optimizer"], torch.optim, params)
 
 
     trainer = Trainer(
         model,
         loss_module,
         metrics,
-        generator_optimizer,
-        discriminator_optimizer,
+        optimizer,
         config=config,
         device=device,
         dataloaders=dataloaders,
-        generator_lr_scheduler=generator_scheduler,
-        discriminator_lr_scheduler=discriminator_scheduler,
         len_epoch=config["trainer"].get("len_epoch", None)
     )
 

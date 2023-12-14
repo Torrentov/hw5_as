@@ -9,10 +9,8 @@ from torch import Tensor
 from torch.utils.data import Dataset
 from torchvision.transforms import RandomCrop
 
-from hw_as.base.base_text_encoder import BaseTextEncoder
 from hw_as.utils.parse_config import ConfigParser
 
-from hw_as import preprocessing
 
 logger = logging.getLogger(__name__)
 
@@ -30,8 +28,6 @@ class BaseDataset(Dataset):
     ):
         self.config_parser = config_parser
         self.wave_augs = wave_augs
-        self.spec_augs = spec_augs
-        self.log_spec = config_parser["preprocessing"]["log_spec"]
         self.random_crop = None
         if crop_audio_length is not None:
             self.random_crop = RandomCrop((1, crop_audio_length))
@@ -48,10 +44,16 @@ class BaseDataset(Dataset):
         audio_path = data_dict["path"]
         audio_wave = self.load_audio(audio_path)
         audio_wave = self.process_wave(audio_wave)
+        gt_label = data_dict["gt_label"]
+        speaker_id = data_dict["speaker_id"]
+        system_id = data_dict["system_id"]
         return {
             "audio": audio_wave,
             "duration": audio_wave.size(1) / self.config_parser["preprocessing"]["sr"],
             "audio_path": audio_path,
+            "gt_label": gt_label,
+            "speaker_id": speaker_id,
+            "system_id": system_id
         }
 
     @staticmethod

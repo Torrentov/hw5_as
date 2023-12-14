@@ -1,7 +1,5 @@
-from hw_as.metric.cer_metric import ArgmaxCERMetric
-from hw_as.metric.wer_metric import ArgmaxWERMetric
+from hw_as.metric.eer_metric import EERMetric
 
 __all__ = [
-    "ArgmaxWERMetric",
-    "ArgmaxCERMetric"
+    "EERMetric"
 ]

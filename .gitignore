@@ -111,7 +111,9 @@ wandb/
 .idea/
 __MACOSX/
 
-.DS_STORE
+.DS_Store
 test_data/
 
 test_results/
+
+data/
