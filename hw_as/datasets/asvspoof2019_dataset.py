@@ -21,7 +21,7 @@ class ASVSpoof2019Dataset(CustomAudioDataset):
             part_protocol = protocols_dir / f"ASVspoof2019.LA.cm.{part}.trl.txt"
         part_dir = audio_dir / f"ASVspoof2019_LA_{part}" / "flac"
         data = []
-        with open(part_protocol, "r") as f:
+        with open(part_protocol, "r") as tqdm(f):
             for line in f:
                 entry = {}
                 line = line.strip('\n')
