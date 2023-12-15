@@ -249,7 +249,6 @@ class RawNet2(BaseModel):
         )
 
     def forward(self, audio_gt, **batch):
-        print(audio_gt.shape)
         x = audio_gt
         x = self.sinc_conv(x)
         x = torch.abs(x)
