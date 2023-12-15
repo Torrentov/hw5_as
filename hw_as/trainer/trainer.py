@@ -96,7 +96,7 @@ class Trainer(BaseTrainer):
                     is_train=True,
                     metrics=self.train_metrics,
                 )
-                all_probs.append(F.softmax(batch["logits"]))
+                all_probs.append(batch["logits"])
                 all_targets.append(batch["gt_label"])
                 if self.lr_scheduler is not None:
                     self.lr_scheduler.step()
@@ -130,7 +130,7 @@ class Trainer(BaseTrainer):
                 self.train_metrics.reset()
             if batch_idx >= self.len_epoch:
                 break
-        all_probs = torch.flatten(torch.cat(all_probs)).cpu().detach().numpy()
+        all_probs = torch.flatten(torch.cat(all_probs)[:,1]).cpu().detach().numpy()
         all_targets = torch.flatten(torch.cat(all_targets)).cpu().detach().numpy()
         self._log_eer(all_probs, all_targets)
         log = last_train_metrics
@@ -181,7 +181,7 @@ class Trainer(BaseTrainer):
                     is_train=False,
                     metrics=self.evaluation_metrics,
                 )
-                all_probs.append(F.softmax(batch["logits"]))
+                all_probs.append(batch["logits"])
                 all_targets.append(batch["gt_label"])
             self.writer.set_step(epoch * self.len_epoch, part)
             self._log_scalars(self.evaluation_metrics)
@@ -191,9 +191,9 @@ class Trainer(BaseTrainer):
             # self._log_spectrogram(batch["spectrogram"])
 
         # add histogram of model parameters to the tensorboard
-        # for name, p in self.model.named_parameters():
-        #     self.writer.add_histogram(name, p, bins="auto")
-        all_probs = torch.flatten(torch.cat(all_probs)).cpu().detach().numpy()
+        for name, p in self.model.named_parameters():
+            self.writer.add_histogram(name, p, bins="auto")
+        all_probs = torch.flatten(torch.cat(all_probs)[:,1]).cpu().detach().numpy()
         all_targets = torch.flatten(torch.cat(all_targets)).cpu().detach().numpy()
         self._log_eer(all_probs, all_targets)
         return self.evaluation_metrics.result()
@@ -267,7 +267,12 @@ class Trainer(BaseTrainer):
             self.writer.add_scalar(f"{metric_name}", metric_tracker.avg(metric_name))
 
     def _log_eer(self, all_probs, all_targets):
-        self.writer.add_scalar("eer", compute_eer(all_probs, all_targets)[0])
+        eer, thr = compute_eer(
+            bonafide_scores=all_probs[all_targets == 1],
+            other_scores=all_probs[all_targets == 0]
+        )  # нашел в чате как пример правильного использования
+        self.writer.add_scalar("eer", eer)
+        self.writer.add_scalar("eer_thr", thr)
 
     def _log_audio(self, batch, number):
         self.writer.add_audio(f"audio_generated_0",
