@@ -23,7 +23,7 @@ class ASVSpoof2019Dataset(CustomAudioDataset):
         data = []
         with open(part_protocol, "r") as f:
             entry = {}
-            for line in tqdm(f):
+            for line in f:
                 line = line.strip('\n')
                 speaker_id, audio_file_name, _, system_id, label = line.split()
                 entry["speaker_id"] = speaker_id
