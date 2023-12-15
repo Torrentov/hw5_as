@@ -130,8 +130,8 @@ class Trainer(BaseTrainer):
                 self.train_metrics.reset()
             if batch_idx >= self.len_epoch:
                 break
-        all_probs = torch.flatten(torch.cat(all_probs)).detach().numpy()
-        all_targets = torch.flatten(torch.cat(all_targets)).detach().numpy()
+        all_probs = torch.flatten(torch.cat(all_probs)).cpu().detach().numpy()
+        all_targets = torch.flatten(torch.cat(all_targets)).cpu().detach().numpy()
         self._log_eer(all_probs, all_targets)
         log = last_train_metrics
 
@@ -196,8 +196,8 @@ class Trainer(BaseTrainer):
         # add histogram of model parameters to the tensorboard
         # for name, p in self.model.named_parameters():
         #     self.writer.add_histogram(name, p, bins="auto")
-        all_probs = torch.flatten(torch.cat(all_probs)).detach().numpy()
-        all_targets = torch.flatten(torch.cat(all_targets)).detach().numpy()
+        all_probs = torch.flatten(torch.cat(all_probs)).cpu().detach().numpy()
+        all_targets = torch.flatten(torch.cat(all_targets)).cpu().detach().numpy()
         self._log_eer(all_probs, all_targets)
         return self.evaluation_metrics.result()
 
