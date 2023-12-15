@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 from math import ceil
+from tqdm import tqdm
 
 import logging
 from typing import List
@@ -20,7 +21,7 @@ def collate_fn(dataset_items: List[dict]):
     # result_batch['system_id'] = []
     result_batch['gt_label'] = []
 
-    for elem in dataset_items:
+    for elem in tqdm(dataset_items):
         wave_current_length = elem['audio'].shape[1]
         if wave_current_length >= 64000:
             wave_padded = elem['audio'][:, :64000]
