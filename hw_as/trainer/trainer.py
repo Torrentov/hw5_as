@@ -143,21 +143,18 @@ class Trainer(BaseTrainer):
 
     def process_batch(self, batch, is_train: bool, metrics: MetricTracker):
         batch = self.move_batch_to_device(batch, self.device)
+        self.optimizer.zero_grad()
+        outputs = self.model(**batch)
+        batch.update(outputs)
+        batch["loss"] = self.criterion(**batch)
         if is_train:
-            self.optimizer.zero_grad()
-            outputs = self.model(**batch)
-            batch.update(outputs)
-            batch["loss"] = self.criterion(**batch)
             batch["loss"].backward()
             self._clip_grad_norm()
             self.optimizer.step()
             # if self.lr_scheduler is not None:
             #     self.lr_scheduler.step()
-        else:
-            outputs = self.model(**batch)
-            batch.update(outputs)
-            batch["loss"] = self.criterion(**batch)
 
+        metrics.update("loss", batch["loss"].item())
         for met in self.metrics:
             metrics.update(met.name, met(**batch))
         return batch
