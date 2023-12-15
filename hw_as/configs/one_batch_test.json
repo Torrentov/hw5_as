@@ -99,7 +99,7 @@
     "early_stop": 100,
     "visualize": "wandb",
     "wandb_project": "as_project",
-    "len_epoch": 2,
+    "len_epoch": 10,
     "grad_norm_clip": 10
   }
 }

@@ -22,13 +22,13 @@ class ASVSpoof2019Dataset(CustomAudioDataset):
         part_dir = audio_dir / f"ASVspoof2019_LA_{part}" / "flac"
         data = []
         with open(part_protocol, "r") as f:
-            entry = {}
             for line in f:
+                entry = {}
                 line = line.strip('\n')
                 speaker_id, audio_file_name, _, system_id, label = line.split()
                 entry["speaker_id"] = speaker_id
                 entry["system_id"] = system_id
-                entry["gt_label"] = (1 if label == "bonafide" else 0)
+                entry["gt_label"] = int(label == "bonafide")
                 entry["path"] = str(part_dir / (audio_file_name + ".flac"))
                 if len(entry) > 0:
                     data.append(entry)
