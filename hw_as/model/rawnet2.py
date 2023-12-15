@@ -108,6 +108,9 @@ class SincConvFast(nn.Module):  # from seminar
 
         self.n_ = self.n_.to(waveforms.device)
 
+        self.low_hz_ = self.low_hz_.to(waveforms.device)
+        self.band_hz_ = self.band_hz_.to(waveforms.device)
+
         self.window_ = self.window_.to(waveforms.device)
 
         low = self.min_low_hz + torch.abs(self.low_hz_)
