@@ -21,7 +21,7 @@ def collate_fn(dataset_items: List[dict]):
     # result_batch['system_id'] = []
     result_batch['gt_label'] = []
 
-    for elem in tqdm(dataset_items):
+    for elem in dataset_items:
         wave_current_length = elem['audio'].shape[1]
         if wave_current_length >= 64000:
             wave_padded = elem['audio'][:, :64000]
