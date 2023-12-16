@@ -259,7 +259,7 @@ class RawNet2(BaseModel):
 
         x = self.res_stack(x)
 
-        # x = self.pre_gru(x)
+        x = self.pre_gru(x)
         x = x.transpose(1, 2)
         self.gru.flatten_parameters()
         x, _ = self.gru(x)

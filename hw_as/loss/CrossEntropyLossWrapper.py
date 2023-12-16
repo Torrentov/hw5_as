@@ -5,9 +5,10 @@ from torch.nn import CrossEntropyLoss
 
 class CrossEntropyLossWrapper(CrossEntropyLoss):
     def __init__(self, weight=None):
-        if weight is None:
-            weight = [1.0, 9.0]
-        super().__init__(weight=torch.tensor(weight))
+        # if weight is None:
+        #     weight = [1.0, 9.0]
+        # super().__init__(weight=torch.tensor(weight))
+        super().__init__()
 
     def forward(self, logits, gt_label,
                 **batch) -> Tensor:
