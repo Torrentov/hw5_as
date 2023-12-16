@@ -11,7 +11,7 @@
   "arch": {
     "type": "RawNet2",
     "args": {
-      "sinc_out_channels": 20,
+      "sinc_out_channels": 128,
       "sinc_kernel_size": 1024,
       "resblocks_channels": [
         [128, 128],
