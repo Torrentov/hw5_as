@@ -44,9 +44,9 @@ class BaseDataset(Dataset):
         audio_path = data_dict["path"]
         audio_wave = self.load_audio(audio_path)
         audio_wave = self.process_wave(audio_wave)
-        gt_label = data_dict["gt_label"]
-        speaker_id = data_dict["speaker_id"]
-        system_id = data_dict["system_id"]
+        gt_label = data_dict.get("gt_label", -1)
+        speaker_id = data_dict.get("speaker_id", "")
+        system_id = data_dict.get("system_id", "")
         return {
             "audio": audio_wave,
             "duration": audio_wave.size(1) / self.config_parser["preprocessing"]["sr"],
