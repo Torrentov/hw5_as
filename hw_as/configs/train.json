@@ -41,19 +41,6 @@
         }
       ]
     },
-    "val": {
-      "batch_size": 32,
-      "num_workers": 4,
-      "datasets": [
-        {
-          "type": "ASVSpoof2019Dataset",
-          "args": {
-            "part": "dev",
-            "audio_dir": "/kaggle/input/asvpoof-2019-dataset/LA/LA"
-          }
-        }
-      ]
-    },
     "test": {
       "batch_size": 32,
       "num_workers": 4,
@@ -85,7 +72,7 @@
     "save_dir": "saved/",
     "save_period": 10,
     "verbosity": 2,
-    "monitor": "min val_loss",
+    "monitor": "min test_loss",
     "early_stop": 100000000000,
     "visualize": "wandb",
     "wandb_project": "as_project",

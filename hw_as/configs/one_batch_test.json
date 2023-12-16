@@ -42,20 +42,6 @@
         }
       ]
     },
-    "val": {
-      "batch_size": 32,
-      "num_workers": 0,
-      "datasets": [
-        {
-          "type": "ASVSpoof2019Dataset",
-          "args": {
-            "part": "dev",
-            "limit": 320,
-            "audio_dir": "data/LA/LA"
-          }
-        }
-      ]
-    },
     "test": {
       "batch_size": 32,
       "num_workers": 0,
@@ -94,7 +80,7 @@
     "save_dir": "saved/",
     "save_period": 10,
     "verbosity": 2,
-    "monitor": "min val_loss",
+    "monitor": "min test_loss",
     "early_stop": 100000,
     "visualize": "wandb",
     "wandb_project": "as_project",
