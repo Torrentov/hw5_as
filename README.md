@@ -17,7 +17,7 @@ python3 train.py -c hw_nv/configs/train.json
 ## Testing guide
 
 ```shell
-python3 test.py -r <path_to_checkpoint>
+python3 test.py -r <path_to_checkpoint> -t hw_as/test_data
 ```
-По умолчанию подразумевается, что вместе с чекпоинтом лежит и конфиг. Чекпоинты моей модели лежат на [гугл диске](https://drive.google.com/drive/folders/1Q4Xp7BrSjqDY5LwqdGgMMZaBVc_ppBqc?usp=drive_link). Не всякий случай, вместе с model_best оставил еще и чекпоинт эпохи, но лучше брать model_best, конечно. При запуске этого кода автоматически в папке test_results/results/ появятся файлы 0.wav, 1.wav и 2.wav, соответствующие 3 тестовым аудио из чата
+По умолчанию подразумевается, что вместе с чекпоинтом лежит и конфиг. Чекпоинты моей модели лежат на гугл диске: [чекпоинт](https://drive.google.com/file/d/1q5ctqoJk7KzTnVdtEUKVqlGbGoKu5wau/view?usp=sharing), [конфиг](https://drive.google.com/file/d/1S4E4aphovX3Oq3168_VmUTfK7YAe260I/view?usp=sharing). Папку датасета можно менять, но я загрузил туда все необходимые файлы - 3 файла из датасета в кагле, 3 файла, сгенерированные моей моделью из 4 ДЗ, а также 2 файла из интернета, один с bonafide аудио, другой с spoof (они подписаны)
 
