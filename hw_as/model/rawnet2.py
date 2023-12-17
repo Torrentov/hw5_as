@@ -38,7 +38,8 @@ class SincConvFast(nn.Module):  # from seminar
         return 700 * (10 ** (mel / 2595) - 1)
 
     def __init__(self, out_channels, kernel_size, sample_rate=16000, in_channels=1,
-                 stride=1, padding=0, dilation=1, bias=False, groups=1, min_low_hz=0, min_band_hz=0):
+                 stride=1, padding=0, dilation=1, bias=False, groups=1, min_low_hz=0, min_band_hz=0,
+                 scale_type='s1'):
 
         super(SincConvFast, self).__init__()
 
@@ -72,10 +73,18 @@ class SincConvFast(nn.Module):  # from seminar
         low_hz = 30
         high_hz = self.sample_rate / 2 - (self.min_low_hz + self.min_band_hz)
 
-        mel = np.linspace(self.to_mel(low_hz),
-                          self.to_mel(high_hz),
-                          self.out_channels + 1)
-        hz = self.to_hz(mel)
+        if scale_type == "s1":
+            mel = np.linspace(self.to_mel(low_hz),
+                              self.to_mel(high_hz),
+                              self.out_channels + 1)
+            hz = self.to_hz(mel)
+        elif scale_type == "s2":
+            mel = np.linspace(self.to_mel(low_hz),
+                              self.to_mel(high_hz),
+                              self.out_channels + 1)
+            hz = self.to_hz(mel)
+            hz = np.abs(hz[::-1] - 1)
+
 
         # filter lower frequency (out_channels, 1)
         self.low_hz_ = torch.Tensor(hz[:-1]).view(-1, 1)
@@ -208,7 +217,7 @@ class RawNet2(BaseModel):
                  fc_size, num_classes,
                  sinc_sample_rate=16000, sinc_in_channels=1,
                  sinc_stride=1, sinc_padding=0, sinc_dilation=1, sinc_bias=False, sinc_groups=1,
-                 sinc_min_low_hz=0, sinc_min_band_hz=0,
+                 sinc_min_low_hz=0, sinc_min_band_hz=0, sinc_scale_type="s1",
                  **batch):
         super().__init__(**batch)
         self.sinc_conv = SincConvFast(out_channels=sinc_out_channels,
@@ -221,7 +230,8 @@ class RawNet2(BaseModel):
                                       bias=sinc_bias,
                                       groups=sinc_groups,
                                       min_low_hz=sinc_min_low_hz,
-                                      min_band_hz=sinc_min_band_hz)
+                                      min_band_hz=sinc_min_band_hz,
+                                      scale_type=sinc_scale_type)
 
         self.after_sinc_conv = nn.Sequential(
             nn.MaxPool1d(3),
@@ -254,7 +264,7 @@ class RawNet2(BaseModel):
     def forward(self, audio_gt, **batch):
         x = audio_gt
         x = self.sinc_conv(x)
-        x = torch.abs(x)
+        # x = torch.abs(x)
         x = self.after_sinc_conv(x)
 
         x = self.res_stack(x)

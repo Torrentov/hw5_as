@@ -5,6 +5,7 @@ from pathlib import Path
 
 import torch
 from tqdm import tqdm
+import torch.nn.functional as F
 import torchaudio
 
 import hw_as.model as module_model
@@ -44,17 +45,11 @@ def main(config, out_dir):
         for batch_num, batch in enumerate(tqdm(dataloaders["test"])):
             batch = Trainer.move_batch_to_device(batch, device)
             output = model(**batch)
-            if type(output) is dict:
-                batch.update(output)
-            else:
-                batch["audio_generated"] = output
-            # print(batch["audio_generated"].shape)
-            # print(batch["audio_gt"].shape)
-            batch["audio_generated"] = batch["audio_generated"].squeeze(0)
-            torchaudio.save(out_dir + str(batch_num) + ".wav",
-                            src=batch["audio_generated"],
-                            sample_rate=22050)
-
+            batch.update(output)
+            print(f"File: {batch['logits']}")
+            print(f"File: {batch['audio_path'][0]}")
+            print(f"Bonafide probability: {F.sigmoid(batch['logits'])[0][1]}")
+            print()
 
 
 if __name__ == "__main__":
@@ -138,10 +133,7 @@ if __name__ == "__main__":
                     {
                         "type": "CustomDirAudioDataset",
                         "args": {
-                            "audio_dir": str(test_data_folder / "audio"),
-                            "transcription_dir": str(
-                                test_data_folder / "transcriptions"
-                            ),
+                            "audio_dir": str(test_data_folder / "audio")
                         },
                     }
                 ],
@@ -153,6 +145,9 @@ if __name__ == "__main__":
     config["data"]["test"]["n_jobs"] = args.jobs
 
     args.output = "test_results/" + args.output + '/'
+
+    if not os.path.exists("test_results/"):
+        os.mkdir("test_results/")
 
     if not os.path.exists(args.output):
         os.mkdir(args.output)
