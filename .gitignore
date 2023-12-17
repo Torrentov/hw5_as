@@ -112,7 +112,6 @@ wandb/
 __MACOSX/
 
 .DS_Store
-test_data/
 
 test_results/
 
