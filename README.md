@@ -9,7 +9,7 @@ pip install -r ./requirements.txt
 ## Training guide
 
 ```shell
-python3 train.py -c hw_nv/configs/train.json
+python3 train.py -c hw_as/configs/train.json
 ```
 В train.py стоит 100 эпох, и, скорее всего, если обучить прям 100, то все будет вообще прекрасно, но у меня столько времени не было(
 Поэтому я останавливал примерно через на 8-10к шагов
